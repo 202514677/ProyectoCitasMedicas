@@ -1,17 +1,9 @@
-
 package clases;
-
 public class clsMedico {
-    private int codigo;
-    private String nombres;
-    private String especialidad;
-    private String cmp;
-    private int estado;
-
-    public clsMedico(int c,String n,String e,String cmp,int es){
-        codigo=c; nombres=n; especialidad=e;
-        this.cmp=cmp; estado=es;
+    public int codMedico, estado;
+    public String nombres, apellidos, especialidad, cmp;
+    public clsMedico(int cm, String nom, String ape, String esp, String cmp, int est) {
+        this.codMedico = cm; this.nombres = nom; this.apellidos = ape;
+        this.especialidad = esp; this.cmp = cmp; this.estado = est;
     }
-
-    public int getCodigo(){ return codigo; }
 }

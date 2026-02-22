@@ -1,15 +1,10 @@
-
 package clases;
-
 public class clsConsultorio {
-    private int codigo;
-    private String nombre;
-    private int piso;
-    private int estado;
-
-    public clsConsultorio(int c,String n,int p,int e){
-        codigo=c; nombre=n; piso=p; estado=e;
+    public int codConsultorio, piso, capacidad, estado;
+    public String nombre, ubicacion;
+    public clsConsultorio(int cc, String nom, int pis, int cap, int est) {
+        this.codConsultorio = cc; this.nombre = nom; this.piso = pis; this.capacidad = cap; this.estado = est;
     }
-
-    public String getNombre(){ return nombre; }
 }
+
+/* falta añadir logica para el campo ubicación */

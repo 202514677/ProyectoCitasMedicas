@@ -1,17 +1,9 @@
-
 package clases;
-
 public class clsPaciente {
-    private int codigo;
-    private String nombres;
-    private String apellidos;
-    private String dni;
-    private int estado;
-
-    public clsPaciente(int c,String n,String a,String d,int e){
-        codigo=c; nombres=n; apellidos=a; dni=d; estado=e;
+    public int codPaciente, edad, estado;
+    public String nombres, apellidos, dni, celular, correo;
+    public clsPaciente(int cp, String nom, String ape, String dni, int ed, String cel, String cor, int est) {
+        this.codPaciente = cp; this.nombres = nom; this.apellidos = ape;
+        this.dni = dni; this.edad = ed; this.celular = cel; this.correo = cor; this.estado = est;
     }
-
-    public String getDni(){ return dni; }
-    public int getCodigo(){ return codigo; }
 }

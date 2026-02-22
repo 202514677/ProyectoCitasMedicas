@@ -1,0 +1,2 @@
+501;Medicina General;2;10;1
+502;Pediatria;3;10;1
