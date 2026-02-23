@@ -1,2 +1,0 @@
-2001;Manuel;Torres;Medicina General;123;1
-2002;Jesica;Chevez;Pediatra;456;1

@@ -13,7 +13,7 @@ public class CitaDAO {
     // Generar número correlativo
     public int generarCorrelativo() {
         if (citas.isEmpty())
-            return 1;
+            return 001;
         return citas.get(citas.size() - 1).getNumCita() + 1;
     }
 
@@ -63,6 +63,16 @@ public class CitaDAO {
 
         c.setEstado(2); // 2 = cancelada
         return "Cita cancelada correctamente.";
+    }
+    
+    public String atender(int num) {
+        for (clsCita c : citas) {
+            if (c.getNumCita() == num) {
+                c.setEstado(1); // 1 = atendida
+                return "Cita marcada como atendida.";
+            }
+        }
+        return "No se encontró la cita.";
     }
 
     // Listar todas las citas

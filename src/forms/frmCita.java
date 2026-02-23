@@ -51,6 +51,7 @@ public class frmCita extends JFrame implements ActionListener {
 	private CitaDAO dao = new CitaDAO();
 	private JScrollPane scrollPane;
 	private JTable tbCita;
+	private JButton btnAtender;
 
 
 	/**
@@ -166,23 +167,23 @@ public class frmCita extends JFrame implements ActionListener {
 		
 		btnRegistrar = new JButton("Registrar");
 		btnRegistrar.addActionListener(this);
-		btnRegistrar.setBounds(459, 88, 96, 20);
+		btnRegistrar.setBounds(459, 73, 96, 20);
 		contentPane.add(btnRegistrar);
 		
 		btnModificar = new JButton("Modificar");
 		btnModificar.addActionListener(this);
-		btnModificar.setBounds(459, 144, 96, 20);
+		btnModificar.setBounds(459, 163, 96, 20);
 		contentPane.add(btnModificar);
 		
 		btnCancelar = new JButton("Cancelar");
 		btnCancelar.addActionListener(this);
 		btnCancelar.setHorizontalAlignment(SwingConstants.LEFT);
-		btnCancelar.setBounds(459, 193, 96, 20);
+		btnCancelar.setBounds(459, 207, 96, 20);
 		contentPane.add(btnCancelar);
 		
 		btnBuscar = new JButton("Buscar");
 		btnBuscar.addActionListener(this);
-		btnBuscar.setBounds(459, 237, 96, 20);
+		btnBuscar.setBounds(459, 249, 96, 20);
 		contentPane.add(btnBuscar);
 		
 		scrollPane = new JScrollPane();
@@ -199,6 +200,11 @@ public class frmCita extends JFrame implements ActionListener {
 		));
 		scrollPane.setViewportView(tbCita);
 		
+		btnAtender = new JButton("Atender");
+		btnAtender.addActionListener(this);
+		btnAtender.setBounds(459, 116, 96, 20);
+		contentPane.add(btnAtender);
+		
 		// Inicializar campos
 		limpiarCampos();
 		listarCitasEnTabla();
@@ -206,6 +212,9 @@ public class frmCita extends JFrame implements ActionListener {
 
 	}
 	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btnAtender) {
+			atenderCita();
+		}
 		if (e.getSource() == btnBuscar) {
 			buscarCita();
 		}
@@ -221,6 +230,7 @@ public class frmCita extends JFrame implements ActionListener {
 		if (e.getSource() == btnNuevo) {
 			limpiarCampos();
 		}
+		
 	}
 	
 	// MÉTODO PARA REGISTRAR CITA
@@ -235,7 +245,7 @@ public class frmCita extends JFrame implements ActionListener {
 				String motivo = txtMotivo.getText();
 				int estado = 0;
 
-				if (fecha.isEmpty() || hora.isEmpty() || motivo.isEmpty()) {
+				if (fecha.isEmpty() || hora.isEmpty()) {
 					JOptionPane.showMessageDialog(this, "Complete todos los campos.");
 					return;
 				}
@@ -295,7 +305,7 @@ public class frmCita extends JFrame implements ActionListener {
 		        int estado = Integer.parseInt(txtEstado.getText());
 
 		        // 4. Validar campos vacíos
-		        if (fecha.isEmpty() || hora.isEmpty() || motivo.isEmpty()) {
+		        if (fecha.isEmpty() || hora.isEmpty()) {
 		            JOptionPane.showMessageDialog(this, "Complete todos los campos.");
 		            return;
 		        }
@@ -382,10 +392,17 @@ public class frmCita extends JFrame implements ActionListener {
 
 		    for (clsCita c : dao.listar()) {
 
-		        // Obtener los textos de los combos según índice
 		        String paciente = cboPaciente.getItemAt(c.getCodPaciente()).toString();
 		        String medico = cboMedico.getItemAt(c.getCodMedico()).toString();
 		        String consultorio = cboConsultorio.getItemAt(c.getCodConsultorio()).toString();
+
+		        // Convertir estado numérico a texto
+		        String estadoTexto = "";
+		        switch (c.getEstado()) {
+		            case 0: estadoTexto = "Pendiente"; break;
+		            case 1: estadoTexto = "Atendida"; break;
+		            case 2: estadoTexto = "Cancelada"; break;
+		        }
 
 		        Object[] fila = {
 		            c.getNumCita(),
@@ -395,12 +412,35 @@ public class frmCita extends JFrame implements ActionListener {
 		            c.getFecha(),
 		            c.getHora(),
 		            c.getMotivo(),
-		            c.getEstado()
+		            estadoTexto
 		        };
 
 		        modelo.addRow(fila);
 		    }
 		}
+		
+		private void atenderCita() {
+		    try {
+		        int num = Integer.parseInt(txtNumCita.getText());
+
+		        clsCita c = dao.buscar(num);
+
+		        if (c == null) {
+		            JOptionPane.showMessageDialog(this, "La cita no existe.");
+		            return;
+		        }
+
+		        String mensaje = dao.atender(num);
+		        JOptionPane.showMessageDialog(this, mensaje);
+
+		        listarCitasEnTabla();
+		        limpiarCampos();
+
+		    } catch (Exception ex) {
+		        JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+		    }
+		}
+	
 }
 
 
