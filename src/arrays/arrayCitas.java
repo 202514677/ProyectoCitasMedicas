@@ -15,14 +15,36 @@ public class arrayCitas {
         return lista; 
     }
 
-    public void adicionar(clsCita x) { 
-        lista.add(x); 
-        guardar(); 
+    public int correlativo() {
+        if (lista.isEmpty()) {
+            return 1; 
+        } else {
+            return lista.get(lista.size() - 1).numCita + 1;
+        }
     }
 
-    public int correlativo() { 
-        return (lista.isEmpty()) ? 10001 : lista.get(lista.size()-1).numCita + 1; 
+    public String adicionar(clsCita nueva) {
+        for (clsCita c : lista) {
+            if (c.estado == 0 || c.estado == 1) {
+                if (c.fecha.equals(nueva.fecha) && c.hora.equals(nueva.hora)) {
+                    
+                    if (c.codConsultorio == nueva.codConsultorio) 
+                        return "EL CONSULTORIO YA ESTÁ OCUPADO.";
+                    
+                    if (c.codMedico == nueva.codMedico) 
+                        return "EL MÉDICO YA TIENE UNA CITA A ESA HORA.";
+                    
+                    if (c.codPaciente == nueva.codPaciente) 
+                        return "EL PACIENTE YA TIENE UNA CITA A ESA HORA.";
+                }
+            }
+        }        
+
+        lista.add(nueva);
+        guardar(); 
+        return null;
     }
+    
     
     public String validarReservaEspecial(clsPaciente p, clsMedico m, clsConsultorio c, String fec, String hor) {
         if (p.estado != 1) return "Error: El paciente está INACTIVO.";

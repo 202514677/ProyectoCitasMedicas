@@ -7,3 +7,4 @@ public class clsMedico {
         this.especialidad = esp; this.cmp = cmp; this.estado = est;
     }
 }
+

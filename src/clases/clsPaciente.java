@@ -7,3 +7,4 @@ public class clsPaciente {
         this.dni = dni; this.edad = ed; this.celular = cel; this.correo = cor; this.estado = est;
     }
 }
+

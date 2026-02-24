@@ -33,7 +33,7 @@ public class FrmMedico extends JFrame implements ActionListener, MouseListener {
         txtEsp = new JTextField(); txtEsp.setBounds(100, 40, 150, 20); add(txtEsp);
 
         add(new JLabel("CMP:")).setBounds(270, 40, 80, 20);
-        txtCmp = new JTextField(); txtCmp.setBounds(350, 40, 150, 20); add(txtCmp);
+        txtCmp = new JTextField(); txtCmp.setBounds(350, 40, 150, 20); add(txtCmp);  
 
         btnNuevo = new JButton("Nuevo");
         btnNuevo.setBounds(550, 10, 120, 23);
@@ -81,7 +81,15 @@ public class FrmMedico extends JFrame implements ActionListener, MouseListener {
 
     private void grabar() {
         if (validarCampos()) {
-            clsMedico m = new clsMedico(am.correlativo(), txtNom.getText(), txtApe.getText(), txtEsp.getText(), txtCmp.getText(), 1);
+            String cmp = txtCmp.getText().trim();            
+            
+            if (am.existeCmp(cmp)) {
+                JOptionPane.showMessageDialog(this, "ERROR: El CMP ya está registrado.");
+                return;
+            }
+            clsMedico m = new clsMedico(am.correlativo(), txtNom.getText().trim(), 
+                                        txtApe.getText().trim(), txtEsp.getText().trim(), 
+                                        cmp, 1);
             am.adicionar(m);
             listar();
             limpiar();
@@ -91,17 +99,40 @@ public class FrmMedico extends JFrame implements ActionListener, MouseListener {
 
     private void modificar() {
         int fila = tabla.getSelectedRow();
-        if (fila != -1 && validarCampos()) {
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione un médico.");
+            return;
+        }
+
+        if (validarCampos()) {
             int cod = (int) modelo.getValueAt(fila, 0);
+            String cmpNuevo = txtCmp.getText().trim();
+
+            boolean duplicado = false;
+            for (int i = 0; i < am.tamaño(); i++) {
+                clsMedico aux = am.obtener(i);
+                if (aux.cmp.equals(cmpNuevo) && aux.codMedico != cod) {
+                    duplicado = true;
+                    break;
+                }
+            }
+
+            if (duplicado) {
+                JOptionPane.showMessageDialog(this, "ERROR: El CMP ya pertenece a otro médico.");
+                return;
+            }
+
             clsMedico m = am.obtenerPorCodigo(cod);
-            m.nombres = txtNom.getText();
-            m.apellidos = txtApe.getText();
-            m.especialidad = txtEsp.getText();
-            m.cmp = txtCmp.getText();
-            am.guardar();
-            listar();
-            limpiar();
-            JOptionPane.showMessageDialog(this, "Médico actualizado.");
+            if (m != null) {
+                m.nombres = txtNom.getText().trim();
+                m.apellidos = txtApe.getText().trim();
+                m.especialidad = txtEsp.getText().trim();
+                m.cmp = cmpNuevo;
+                am.guardar();
+                listar();
+                limpiar();
+                JOptionPane.showMessageDialog(this, "Médico actualizado.");
+            }
         }
     }
 
@@ -133,7 +164,13 @@ public class FrmMedico extends JFrame implements ActionListener, MouseListener {
     }
 
     private boolean validarCampos() {
-        return !txtNom.getText().isEmpty() && !txtApe.getText().isEmpty();
+        if (txtNom.getText().trim().isEmpty() || 
+            txtApe.getText().trim().isEmpty() || 
+            txtCmp.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Todos los campos principales son obligatorios.");
+            return false;
+        }
+        return true;
     }
 
     void listar() {

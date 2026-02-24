@@ -103,16 +103,13 @@ public class FrmCita extends JFrame implements ActionListener, MouseListener {
             txtHora.setText(c.hora);
             txtMotivo.setText(c.motivo);
             txtEstado.setText(c.estado == 0 ? "Pendiente" : c.estado == 1 ? "Atendida" : "Cancelada");
-
-            // Pre-validar paciente automáticamente
+            
             pacienteSeleccionado = ap.obtenerPorCodigo(c.codPaciente);
             txtDniPaciente.setText(pacienteSeleccionado != null ? pacienteSeleccionado.dni : "N/A");
-
-            // Sincronizar Combos
-            setSelectedIndexByCode(cboMedico, c.codMedico);
-            setSelectedIndexByCode(cboConsultorio, c.codConsultorio);
             
-            // Seleccionar visualmente la fila en la tabla
+            setSelectedIndexByCode(cboMedico, c.codMedico);
+            setSelectedIndexByCode(cboConsultorio, c.codConsultorio);            
+         
             seleccionarFilaEnTabla(c.numCita);
         }
     }
@@ -200,14 +197,26 @@ public class FrmCita extends JFrame implements ActionListener, MouseListener {
         }
         try {
             int codMed = getCodCbo(cboMedico);
-            int codCon = getCodCbo(cboConsultorio);
+            int codCon = getCodCbo(cboConsultorio);            
+           
             clsCita nueva = new clsCita(ac.correlativo(), pacienteSeleccionado.codPaciente, codMed, codCon, 
-                                        txtFecha.getText(), txtHora.getText(), 0, txtMotivo.getText());
-            ac.adicionar(nueva);
-            listarCitas();
-            limpiarCampos();
-            JOptionPane.showMessageDialog(this, "Reserva exitosa.");
-        } catch (Exception ex) { JOptionPane.showMessageDialog(this, "Error al registrar."); }
+                                        txtFecha.getText(), txtHora.getText(), 0, txtMotivo.getText());            
+          
+            String mensajeError = ac.adicionar(nueva);
+
+            if (mensajeError == null) {
+                listarCitas();
+                limpiarCampos();
+                JOptionPane.showMessageDialog(this, "Reserva exitosa.");
+            } else {
+                
+                JOptionPane.showMessageDialog(this, "No se puede registrar:\n" + mensajeError, 
+                                              "Cruce de Horario", JOptionPane.WARNING_MESSAGE);
+            }
+            
+        } catch (Exception ex) { 
+            JOptionPane.showMessageDialog(this, "Error al registrar: " + ex.getMessage()); 
+        }
     }
 
     private void modificarCita() {
@@ -217,17 +226,27 @@ public class FrmCita extends JFrame implements ActionListener, MouseListener {
         }
         int num = Integer.parseInt(txtNumCita.getText());
         clsCita c = localizarCita(num);
-        if (c != null && c.estado == 0) {
-            c.codMedico = getCodCbo(cboMedico);
-            c.codConsultorio = getCodCbo(cboConsultorio);
-            c.fecha = txtFecha.getText();
-            c.hora = txtHora.getText();
-            c.motivo = txtMotivo.getText();
-            ac.guardar();
-            listarCitas();
-            JOptionPane.showMessageDialog(this, "Cita modificada.");
+
+        if (c != null && c.estado == 0) {          
+            int nuevoMed = getCodCbo(cboMedico);
+            int nuevoCon = getCodCbo(cboConsultorio);
+            String nuevaFec = txtFecha.getText();
+            String nuevaHor = txtHora.getText();
+          
+            clsCita temporal = new clsCita(num, c.codPaciente, nuevoMed, nuevoCon, nuevaFec, nuevaHor, 0, "");            
+         
+            ac.getLista().remove(c);
+            String error = ac.adicionar(temporal); 
+            
+            if (error == null) {
+                listarCitas();
+                JOptionPane.showMessageDialog(this, "Cita reprogramada con éxito.");
+            } else {
+                ac.getLista().add(c); 
+                JOptionPane.showMessageDialog(this, "Error al reprogramar: " + error);
+            }
         } else {
-            JOptionPane.showMessageDialog(this, "No se puede modificar una cita atendida/cancelada.");
+            JOptionPane.showMessageDialog(this, "Solo se pueden modificar citas en estado Pendiente.");
         }
     }
 
@@ -239,7 +258,7 @@ public class FrmCita extends JFrame implements ActionListener, MouseListener {
                 c.estado = nuevoEstado;
                 ac.guardar();
                 listarCitas();
-                cargarDatosCita(c); // Refrescar vista
+                cargarDatosCita(c); 
             }
         } catch (Exception e) {}
     }

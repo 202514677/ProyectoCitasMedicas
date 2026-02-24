@@ -20,13 +20,10 @@ public class FrmMenu extends JFrame implements ActionListener {
     private arrayCitas ac = new arrayCitas();
 
     public FrmMenu() {
-        setTitle("SISTEMA DE RESERVA DE CITAS MÉDICAS ");
-        
-        // 1. Establecer un tamaño inicial para cuando se restaure
+        setTitle("SISTEMA DE RESERVA DE CITAS MÉDICAS ");        
         setSize(1024, 768);
-        // 2. Establecer un tamaño mínimo para que no se pierda el foco
         setMinimumSize(new Dimension(800, 600));
-        // 3. Maximizar por defecto
+
         setExtendedState(MAXIMIZED_BOTH);
         
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -34,9 +31,9 @@ public class FrmMenu extends JFrame implements ActionListener {
         
         mb = new JMenuBar();              
       
-        JLabel fondo = new JLabel(new ImageIcon("hospital.jpg")); 
+        JLabel fondo = new JLabel(new ImageIcon("C:\\Users\\almud\\Downloads\\Cibertec\\ProyectoFinalAED\\ProyectoCitasMedicas\\src\\guis\\CitaMedica.jpg")); 
         fondo.setBounds(0, 0, 1920, 1080);
-        add(fondo);               
+        getContentPane().add(fondo);               
                 
         mMan = new JMenu("Mantenimiento");
         iPac = new JMenuItem("Pacientes");

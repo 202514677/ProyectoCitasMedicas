@@ -108,7 +108,7 @@ public class FrmConsultaFecha extends JFrame implements ActionListener {
     }
 
     private void filtrar(String criterio, boolean esFechaExacta) {
-        ac.cargar(); // Recargamos para ver cambios en el archivo citas.txt
+        ac.cargar(); 
         modelo.setRowCount(0);
         for (clsCita c : ac.getLista()) {
             boolean coincide = esFechaExacta ? c.fecha.equals(criterio) : c.fecha.contains(criterio);

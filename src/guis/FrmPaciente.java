@@ -6,6 +6,7 @@ import clases.*;
 import arrays.*;
 import java.awt.event.*;
 
+
 public class FrmPaciente extends JFrame implements ActionListener, MouseListener {
     private static final long serialVersionUID = 1L;
     private JTextField txtNom, txtApe, txtDni, txtEdad;
@@ -89,30 +90,54 @@ public class FrmPaciente extends JFrame implements ActionListener, MouseListener
 
     private void grabar() {
         try {
+            String dni = txtDni.getText().trim();
+
+            if (dni.length() != 8) {
+                JOptionPane.showMessageDialog(this, "El DNI debe tener exactamente 8 dígitos.");
+                return;
+            }
+
+            if (ap.existeDni(dni)) {
+                JOptionPane.showMessageDialog(this, "ERROR: El DNI ya se encuentra registrado.");
+                return;
+            }
+
             String nom = txtNom.getText().trim();
             String ape = txtApe.getText().trim();
-            String dni = txtDni.getText().trim();
             int edad = Integer.parseInt(txtEdad.getText().trim());
 
             clsPaciente nuevo = new clsPaciente(ap.correlativo(), nom, ape, dni, edad, "", "", 1);
             ap.adicionar(nuevo);
             listar();
             limpiar();
-            JOptionPane.showMessageDialog(this, "Paciente registrado.");
+            JOptionPane.showMessageDialog(this, "Paciente registrado correctamente.");
+
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(this, "La edad debe ser un valor numérico.");
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error en los datos.");
+            JOptionPane.showMessageDialog(this, "Ocurrió un error inesperado.");
         }
     }
 
     private void modificar() {
         int fila = tabla.getSelectedRow();
         if (fila == -1) return;
+        
         int cod = (int) modelo.getValueAt(fila, 0);
+        String dniNuevo = txtDni.getText().trim();        
+
+        clsPaciente pacienteConEseDni = ap.buscarDni(dniNuevo);
+        
+        if (pacienteConEseDni != null && pacienteConEseDni.codPaciente != cod) {
+            JOptionPane.showMessageDialog(this, "ERROR: El DNI ya pertenece a otro paciente.");
+            return;
+        }
+
         clsPaciente p = ap.obtenerPorCodigo(cod);
         if (p != null) {
             p.nombres = txtNom.getText();
             p.apellidos = txtApe.getText();
-            p.dni = txtDni.getText();
+            p.dni = dniNuevo;
             p.edad = Integer.parseInt(txtEdad.getText());
             ap.guardar();
             listar();
@@ -166,8 +191,11 @@ public class FrmPaciente extends JFrame implements ActionListener, MouseListener
         tabla.clearSelection();
     }
 
+    
     public void mousePressed(MouseEvent e) {}
     public void mouseReleased(MouseEvent e) {}
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}
+    
+    
 }

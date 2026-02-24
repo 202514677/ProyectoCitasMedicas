@@ -9,7 +9,14 @@ public class arrayPacientes {
         lista = new ArrayList<>();
         cargar();
     }
-    public void adicionar(clsPaciente x) { lista.add(x); guardar(); }
+    public boolean adicionar(clsPaciente x) {
+        if (existeDni(x.dni)) {
+            return false; 
+        }
+        lista.add(x); 
+        guardar(); 
+        return true; 
+    }
     public int tamaño() { return lista.size(); }
     public clsPaciente obtener(int i) { return lista.get(i); }
     public clsPaciente buscar(int cod) {

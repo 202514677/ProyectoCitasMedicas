@@ -1,4 +1,6 @@
 2001;Diego;Robles;Medicina General;123456;1
 2002;Maria;Villa;Pediatría;654321;1
-2003;Juan;Pacheco;Cirujia Gneral;7896325;0
+2003;Juan;Pacheco;Cirujia Gneral;1234567;0
 2004;Margarita;Fuentes;Pediatría;654321;1
+2005;Rita;Lopez;Medicina Interna;123456;1
+2006;Diana;Polar;Medicina Interna;147896;1
